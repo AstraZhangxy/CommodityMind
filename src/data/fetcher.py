@@ -1,58 +1,34 @@
-"""
-fetcher.py
-
-Download commodity market data from Yahoo Finance.
-"""
-
-from datetime import datetime
-
+from pathlib import Path
 import pandas as pd
-import yfinance as yf
 
 
 class CommodityFetcher:
-    """
-    Fetch historical commodity market data.
-    """
 
-    def fetch(
-        self,
-        symbol: str,
-        start_date: str,
-        end_date: str,
-    ) -> pd.DataFrame:
-        """
-        Download historical market data.
+    def __init__(self):
 
-        Parameters
-        ----------
-        symbol : str
-            Yahoo Finance ticker.
-
-        start_date : str
-            YYYY-MM-DD
-
-        end_date : str
-            YYYY-MM-DD
-
-        Returns
-        -------
-        pandas.DataFrame
-        """
-
-        data = yf.download(
-            symbol,
-            start=start_date,
-            end=end_date,
-            auto_adjust=True,
-            progress=False,
+        self.data_dir = (
+            Path(__file__).resolve().parents[2]
+            / "data"
+            / "raw"
         )
 
-        if data.empty:
-            raise ValueError(
-                f"No data returned for {symbol}"
+    def available(self):
+
+        return sorted(
+            [
+                f.stem
+                for f in self.data_dir.glob("*.csv")
+            ]
+        )
+
+    def load(self, name: str):
+
+        file = self.data_dir / f"{name}.csv"
+
+        if not file.exists():
+
+            raise FileNotFoundError(
+                f"Dataset not found: {file}"
             )
 
-        data.index = pd.to_datetime(data.index)
-
-        return data.sort_index()
+        return pd.read_csv(file)

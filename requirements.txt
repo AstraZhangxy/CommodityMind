@@ -1,9 +1,11 @@
 pandas
 numpy
+yfinance
 matplotlib
 plotly
-yfinance
-python-dotenv
 requests
-jupyter
 streamlit
+openai
+python-dotenv
+scikit-learn
+pandas-datareader
