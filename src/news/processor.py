@@ -3,6 +3,7 @@ processor.py
 
 Clean financial news text
 before sentiment analysis,
+importance scoring,
 embedding and RAG.
 """
 
@@ -11,9 +12,13 @@ import re
 
 from bs4 import BeautifulSoup
 
+
 from src.news.model import NewsItem
 
 from src.news.sentiment import NewsSentimentAnalyzer
+
+from src.news.importance import NewsImportanceAnalyzer
+
 
 
 
@@ -23,8 +28,14 @@ class NewsProcessor:
 
     def __init__(self):
 
+
         self.sentiment_analyzer = (
             NewsSentimentAnalyzer()
+        )
+
+
+        self.importance_analyzer = (
+            NewsImportanceAnalyzer()
         )
 
 
@@ -35,10 +46,19 @@ class NewsProcessor:
     ):
 
 
+        """
+        Remove html,
+        urls and useless characters.
+        """
+
+
         if not text:
 
             return ""
 
+
+
+        # remove html
 
         soup = BeautifulSoup(
             text,
@@ -51,12 +71,18 @@ class NewsProcessor:
         )
 
 
+
+        # remove url
+
         text = re.sub(
             r"http\S+",
             "",
             text
         )
 
+
+
+        # remove extra spaces
 
         text = re.sub(
             r"\s+",
@@ -65,7 +91,9 @@ class NewsProcessor:
         )
 
 
+
         return text.strip()
+
 
 
 
@@ -73,6 +101,28 @@ class NewsProcessor:
             self,
             news: NewsItem
     ):
+
+
+        """
+        Process NewsItem.
+
+        Pipeline:
+
+        NewsItem
+            |
+            ↓
+        clean text
+            |
+            ↓
+        sentiment score
+            |
+            ↓
+        importance score
+            |
+            ↓
+        NewsItem
+        """
+
 
 
         cleaned_content = (
@@ -86,9 +136,22 @@ class NewsProcessor:
         )
 
 
+
         sentiment_score = (
 
             self.sentiment_analyzer.analyze(
+
+                cleaned_content
+
+            )
+
+        )
+
+
+
+        importance_score = (
+
+            self.importance_analyzer.analyze(
 
                 cleaned_content
 
@@ -122,7 +185,7 @@ class NewsProcessor:
             sentiment_score=sentiment_score,
 
 
-            importance_score=news.importance_score
+            importance_score=importance_score
 
         )
 
