@@ -1,1 +1,4 @@
-
+GOLD = "GC=F"
+WTI = "CL=F"
+BRENT = "BZ=F"
+COPPER = "HG=F"
