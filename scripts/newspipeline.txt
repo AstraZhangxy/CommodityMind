@@ -1,0 +1,29 @@
+                 RSS
+                  |
+                  ↓
+           News Collector
+                  |
+                  ↓
+             NewsItem
+                  |
+                  ↓
+            Processor
+                  |
+        ┌─────────┴─────────┐
+        ↓                   ↓
+ sentiment            importance
+        |
+        ↓
+ BGE-M3 Embedding嵌入，文本转向量
+        |
+        ↓
+      FAISS向量数据库，存储向量并高速相似度检索
+        |
+        ↓
+    Retrieved News
+        |
+        ↓
+     DeepSeek为LLM，最终逻辑推理问答与行情解读
+        |
+        ↓
+ Financial Q&A
